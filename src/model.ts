@@ -17,6 +17,10 @@ function toCapeVertices(x1: number, y1: number, x2: number, y2: number) {
 	return toFaceVertices(x1, y1, x2, y2, 64.0, 32.0);
 }
 
+function toElytraVertices(x1: number, y1: number, x2: number, y2: number) {
+	return toFaceVertices(x1 + 22, y1, x2 + 22, y2, 64.0, 32.0);
+}
+
 function setVertices(box: THREE.BoxGeometry, top: Array<THREE.Vector2>, bottom: Array<THREE.Vector2>, left: Array<THREE.Vector2>, front: Array<THREE.Vector2>, right: Array<THREE.Vector2>, back: Array<THREE.Vector2>) {
 
 	box.faceVertexUvs[0] = [];
@@ -366,10 +370,67 @@ export class CapeObject extends THREE.Group {
 	}
 }
 
+export class ElytraObject extends THREE.Group {
+
+	readonly leftWing: THREE.Group;
+	readonly rightWing: THREE.Group;
+
+	constructor(elytraMaterial: THREE.MeshBasicMaterial) {
+		super();
+
+		const leftWingBox = new THREE.BoxGeometry(10, 20, 2);
+		setVertices(leftWingBox,
+			toElytraVertices(2, 0, 12, 2),
+			toElytraVertices(12, 0, 22, 2),
+			toElytraVertices(0, 2, 2, 22),
+			toElytraVertices(2, 2, 12, 22),
+			toElytraVertices(12, 2, 14, 22),
+			toElytraVertices(14, 2, 24, 22)
+		);
+		const leftWingMesh = new THREE.Mesh(leftWingBox, elytraMaterial);
+		leftWingMesh.position.x = -5;
+		leftWingMesh.position.y = -10;
+		leftWingMesh.position.z = -1;
+		leftWingMesh.scale.x = -1;
+		this.leftWing = new THREE.Group();
+		this.leftWing.add(leftWingMesh);
+		this.leftWing.position.x = 5;
+
+		this.leftWing.rotation.x = 0.2617994;
+		this.leftWing.rotation.y = 0;
+		this.leftWing.rotation.z = -0.2617994;
+
+		this.add(this.leftWing);
+
+		const rightWingBox = new THREE.BoxGeometry(10, 20, 2);
+		setVertices(rightWingBox,
+			toElytraVertices(2, 0, 12, 2),
+			toElytraVertices(12, 0, 22, 2),
+			toElytraVertices(0, 2, 2, 22),
+			toElytraVertices(2, 2, 12, 22),
+			toElytraVertices(12, 2, 14, 22),
+			toElytraVertices(14, 2, 24, 22)
+		);
+		const rightWingMesh = new THREE.Mesh(rightWingBox, elytraMaterial);
+		rightWingMesh.position.x = 5;
+		rightWingMesh.position.y = -10;
+		rightWingMesh.position.z = -1;
+		this.rightWing = new THREE.Group();
+		this.rightWing.add(rightWingMesh);
+		this.rightWing.position.x = -5;
+
+		this.rightWing.rotation.x = 0.2617994;
+		this.rightWing.rotation.y = 0;
+		this.rightWing.rotation.z = 0.2617994;
+		this.add(this.rightWing);
+	}
+}
+
 export class PlayerObject extends THREE.Group {
 
 	readonly skin: SkinObject;
 	readonly cape: CapeObject;
+	readonly elytra: ElytraObject;
 
 	constructor(layer1Material: THREE.MeshBasicMaterial, layer2Material: THREE.MeshBasicMaterial, capeMaterial: THREE.MeshBasicMaterial) {
 		super();
@@ -382,5 +443,11 @@ export class PlayerObject extends THREE.Group {
 		this.cape.position.y = -4;
 		this.cape.rotation.x = 25 * Math.PI / 180;
 		this.add(this.cape);
+
+		this.elytra = new ElytraObject(capeMaterial);
+		this.elytra.position.y = -7;
+		this.elytra.position.z = -2;
+		this.elytra.visible = false;
+		this.add(this.elytra);
 	}
 }
