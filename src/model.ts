@@ -375,14 +375,12 @@ export class PlayerObject extends THREE.Group {
 		super();
 
 		this.skin = new SkinObject(layer1Material, layer2Material);
-		this.skin.visible = false;
 		this.add(this.skin);
 
 		this.cape = new CapeObject(capeMaterial);
 		this.cape.position.z = -2;
 		this.cape.position.y = -4;
 		this.cape.rotation.x = 25 * Math.PI / 180;
-		this.cape.visible = false;
 		this.add(this.cape);
 	}
 }

@@ -60,7 +60,7 @@ export class SkinViewer {
 		this.capeTexture.magFilter = THREE.NearestFilter;
 		this.capeTexture.minFilter = THREE.NearestFilter;
 
-		this.layer1Material = new THREE.MeshBasicMaterial({ map: this.skinTexture, side: THREE.FrontSide });
+		this.layer1Material = new THREE.MeshBasicMaterial({ map: this.skinTexture, transparent: true, opacity: 1, side: THREE.DoubleSide, alphaTest: 0.5 });
 		this.layer2Material = new THREE.MeshBasicMaterial({ map: this.skinTexture, transparent: true, opacity: 1, side: THREE.DoubleSide, alphaTest: 0.5 });
 		this.capeMaterial = new THREE.MeshBasicMaterial({ map: this.capeTexture, transparent: true, opacity: 1, side: THREE.DoubleSide, alphaTest: 0.5 });
 
@@ -93,8 +93,6 @@ export class SkinViewer {
 			this.skinTexture.needsUpdate = true;
 			this.layer1Material.needsUpdate = true;
 			this.layer2Material.needsUpdate = true;
-
-			this.playerObject.skin.visible = true;
 		};
 
 		this.capeImg.crossOrigin = "anonymous";
@@ -104,8 +102,6 @@ export class SkinViewer {
 
 			this.capeTexture.needsUpdate = true;
 			this.capeMaterial.needsUpdate = true;
-
-			this.playerObject.cape.visible = true;
 		};
 
 		if (options.skinUrl) this.skinUrl = options.skinUrl;
