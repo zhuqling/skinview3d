@@ -1,10 +1,19 @@
-function copyImage(context: CanvasRenderingContext2D, sX: number, sY: number, w: number, h: number, dX: number, dY: number, flipHorizontal: boolean) {
+function copyImage(
+	context: CanvasRenderingContext2D,
+	sX: number,
+	sY: number,
+	w: number,
+	h: number,
+	dX: number,
+	dY: number,
+	flipHorizontal: boolean
+) {
 	const imgData = context.getImageData(sX, sY, w, h);
 	if (flipHorizontal) {
 		for (let y = 0; y < h; y++) {
-			for (let x = 0; x < (w / 2); x++) {
+			for (let x = 0; x < w / 2; x++) {
 				const index = (x + y * w) * 4;
-				const index2 = ((w - x - 1) + y * w) * 4;
+				const index2 = (w - x - 1 + y * w) * 4;
 				const pA1 = imgData.data[index];
 				const pA2 = imgData.data[index + 1];
 				const pA3 = imgData.data[index + 2];
@@ -30,7 +39,13 @@ function copyImage(context: CanvasRenderingContext2D, sX: number, sY: number, w:
 	context.putImageData(imgData, dX, dY);
 }
 
-function hasTransparency(context: CanvasRenderingContext2D, x0: number, y0: number, w: number, h: number) {
+function hasTransparency(
+	context: CanvasRenderingContext2D,
+	x0: number,
+	y0: number,
+	w: number,
+	h: number
+) {
 	const imgData = context.getImageData(x0, y0, w, h);
 	for (let x = 0; x < w; x++) {
 		for (let y = 0; y < h; y++) {
@@ -52,7 +67,8 @@ function fixOpaqueSkin(context: CanvasRenderingContext2D, width: number) {
 	// We have to make the helm area transparent, otherwise it will be rendered as black.
 	if (!hasTransparency(context, 0, 0, width, width / 2)) {
 		const scale = computeSkinScale(width);
-		const clearArea = (x, y, w, h) => context.clearRect(x * scale, y * scale, w * scale, h * scale);
+		const clearArea = (x, y, w, h) =>
+			context.clearRect(x * scale, y * scale, w * scale, h * scale);
 		clearArea(40, 0, 8, 8); // Helm Top
 		clearArea(48, 0, 8, 8); // Helm Bottom
 		clearArea(32, 8, 8, 8); // Helm Right
@@ -64,7 +80,17 @@ function fixOpaqueSkin(context: CanvasRenderingContext2D, width: number) {
 
 function convertSkinTo1_8(context: CanvasRenderingContext2D, width: number) {
 	const scale = computeSkinScale(width);
-	const copySkin = (sX, sY, w, h, dX, dY, flipHorizontal) => copyImage(context, sX * scale, sY * scale, w * scale, h * scale, dX * scale, dY * scale, flipHorizontal);
+	const copySkin = (sX, sY, w, h, dX, dY, flipHorizontal) =>
+		copyImage(
+			context,
+			sX * scale,
+			sY * scale,
+			w * scale,
+			h * scale,
+			dX * scale,
+			dY * scale,
+			flipHorizontal
+		);
 
 	fixOpaqueSkin(context, width);
 
@@ -82,7 +108,10 @@ function convertSkinTo1_8(context: CanvasRenderingContext2D, width: number) {
 	copySkin(52, 20, 4, 12, 44, 52, true); // Back Arm
 }
 
-export function loadSkinToCanvas(canvas: HTMLCanvasElement, image: HTMLImageElement) {
+export function loadSkinToCanvas(
+	canvas: HTMLCanvasElement,
+	image: HTMLImageElement
+) {
 	let isOldFormat = false;
 	if (image.width !== image.height) {
 		if (image.width === 2 * image.height) {
@@ -108,7 +137,10 @@ export function loadSkinToCanvas(canvas: HTMLCanvasElement, image: HTMLImageElem
 	}
 }
 
-export function loadCapeToCanvas(canvas: HTMLCanvasElement, image: HTMLImageElement) {
+export function loadCapeToCanvas(
+	canvas: HTMLCanvasElement,
+	image: HTMLImageElement
+) {
 	let isOldFormat = false;
 	if (image.width !== 2 * image.height) {
 		if (image.width * 17 === image.height * 22) {
@@ -121,7 +153,7 @@ export function loadCapeToCanvas(canvas: HTMLCanvasElement, image: HTMLImageElem
 
 	const context = canvas.getContext("2d")!;
 	if (isOldFormat) {
-		const width = image.width * 64 / 22;
+		const width = (image.width * 64) / 22;
 		canvas.width = width;
 		canvas.height = width / 2;
 	} else {
@@ -132,7 +164,9 @@ export function loadCapeToCanvas(canvas: HTMLCanvasElement, image: HTMLImageElem
 	context.drawImage(image, 0, 0, image.width, image.height);
 }
 
-export function isSlimSkin(canvasOrImage: HTMLCanvasElement | HTMLImageElement): boolean {
+export function isSlimSkin(
+	canvasOrImage: HTMLCanvasElement | HTMLImageElement
+): boolean {
 	// Detects whether the skin is default or slim.
 	//
 	// The right arm area of *default* skins:
@@ -178,11 +212,14 @@ export function isSlimSkin(canvasOrImage: HTMLCanvasElement | HTMLImageElement):
 		const canvas = canvasOrImage;
 		const scale = computeSkinScale(canvas.width);
 		const context = canvas.getContext("2d")!;
-		const checkArea = (x, y, w, h) => hasTransparency(context, x * scale, y * scale, w * scale, h * scale);
-		return checkArea(50, 16, 2, 4) ||
+		const checkArea = (x, y, w, h) =>
+			hasTransparency(context, x * scale, y * scale, w * scale, h * scale);
+		return (
+			checkArea(50, 16, 2, 4) ||
 			checkArea(54, 20, 2, 12) ||
 			checkArea(42, 48, 2, 4) ||
-			checkArea(46, 52, 2, 12);
+			checkArea(46, 52, 2, 12)
+		);
 	} else {
 		const image = canvasOrImage;
 		const canvas = document.createElement("canvas");
